@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% include "base.html" %}
+
+{{project_id}}
+{{project_name}}
+{{tasks}}
+{{members}}
+
+<style>
+.members_list {
+	        max-width: 400px;
+	        padding: 15px;
+	        margin: 0 auto;
+}
+.btn {
+	        white-space: normal;
+}
+
+.panel-body { padding:0px; }
+
+.panel .glyphicon,.list-group-item .glyphicon { margin-right:5px; }
+
+.list-group { margin-bottom:0px; }
+
+</style>
+
+
+
+<body>
+	<div class="members_list">
+		<div class="panel panel-default">
+			<div class="panel-heading">Members</div>
+	
+			<div class="panel-body">
+				<ul class="list-group">
+					{%for id, member in members.items%}
+							<li class="list-group-item">
+							<label for="{{id}}">{{member}}</label>
+						        <div class="pull-right action-buttons">
+								<input type="checkbox" id="{{id}}" class="checkbox" value={{member}} />
+							</div>
+						</li>
+					{%endfor%}
+				</ul>
+			</div>
+		</div>
+
+
+		<table width="100%" >
+			<tr>
+				<td align=center><label class="radio-inline"><input type="radio" name="Task" id="addTask">Add Task</label></td>
+				<td align=center><label class="radio-inline"><input type="radio" name="Task" id="updateTask">Update Task</label></td>
+			</tr>
+		</table>
+		<br>
+		<select class="form-control">
+			<option value="one">One</option>
+			<option value="two">Two</option>
+			<option value="three">Three</option>
+			<option value="four">Four</option>
+			<option value="five">Five</option>
+		</select>
+		<div class="form-group">
+			  <label for="comment">Comment:</label>
+			    <textarea class="form-control" rows="5" id="comment"></textarea>
+		    </div>
+
+
+	</div>
+</body>
+
+<script>
+        $(document).ready(function($){
+	        /*
+        	$('.member_checkbox').click(function(){
+		alert("helloooooooooo");
+		alert($('.member_checkbox:checkbox:checked').val);
+		});
+
+		$('input:checkbox').click(function () {
+                var sThisVal = (this.checked ? $(this).val() : "");
+                alert(sThisVal);
+                alert("helloooooooooo");
+                });
+                */
+	});
+
+</script>
