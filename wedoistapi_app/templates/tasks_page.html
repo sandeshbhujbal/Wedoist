@@ -3,7 +3,7 @@
 
 {% include "base.html" %}
 
-<script src="/static/js/jquery.form.js"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script>
 
 <style>
 .members_list {
@@ -113,7 +113,6 @@
 				$('#tasks').append('<option value = "'+key+'">' + value +'</li>');
 			});
 			$('#task').val("");
-
 			//Hide the alert box automatically after some time
 			$('#alert_box').addClass("alert-success");
 			$('#alert_box').css("display","block");
