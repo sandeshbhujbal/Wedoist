@@ -60,6 +60,15 @@ print PROJECT_ROOT
 TEMPLATE_DIRS = [
 	os.path.join(PROJECT_ROOT, "wedoistapi_app/templates"),
 ]
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+	os.path.join(PROJECT_ROOT, 'wedoistapi_app/static'),
+)
+
+print STATICFILES_DIRS
+
 """
 TEMPLATES = [
     {

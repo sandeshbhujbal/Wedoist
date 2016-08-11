@@ -3,10 +3,7 @@
 
 {% include "base.html" %}
 
-{{project_id}}
-{{project_name}}
-{{tasks}}
-{{members}}
+<script src="/static/js/jquery.form.js"></script>
 
 <style>
 .members_list {
@@ -29,17 +26,24 @@
 
 
 <body>
+	<form method="POST" action="submit_task" id="form_tasks">	
+		<input type="hidden" name="project_id" value="{{project_id}}">
+		<input type="hidden" name="project_name" value="{{project_name}}">
+		<input type="hidden" name="list_id" value="{{list_id}}">
+		<input type="hidden" name="list_name" value="{{list_name}}">
+	<center><h3>Tasks Assignment</h3></center>
 	<div class="members_list">
+		<div class="alert " id="alert_box" style="display:none;"></div>
+		
 		<div class="panel panel-default">
 			<div class="panel-heading">Members</div>
-	
 			<div class="panel-body">
 				<ul class="list-group">
 					{%for id, member in members.items%}
-							<li class="list-group-item">
+						<li class="list-group-item">
 							<label for="{{id}}">{{member}}</label>
-						        <div class="pull-right action-buttons">
-								<input type="checkbox" id="{{id}}" class="checkbox" value={{member}} />
+							<div class="pull-right action-buttons">
+								<input type="checkbox" id="{{id}}" class="checkbox" name="members_list" value={{member}} />
 							</div>
 						</li>
 					{%endfor%}
@@ -50,41 +54,86 @@
 
 		<table width="100%" >
 			<tr>
-				<td align=center><label class="radio-inline"><input type="radio" name="Task" id="addTask">Add Task</label></td>
-				<td align=center><label class="radio-inline"><input type="radio" name="Task" id="updateTask">Update Task</label></td>
+				<td align=center><label class="radio-inline"><input type="radio" name="Task" value="add_task" id="radio_add_task" checked=checked required>Add Task</label></td>
+				<td align=center><label class="radio-inline"><input type="radio" name="Task" value="update_task" id="radio_update_task" required>Update Task</label></td>
 			</tr>
 		</table>
 		<br>
-		<select class="form-control">
-			<option value="one">One</option>
-			<option value="two">Two</option>
-			<option value="three">Three</option>
-			<option value="four">Four</option>
-			<option value="five">Five</option>
-		</select>
+		
+		<div class="form-group" id="task_list" style="display:none">
+			<select class="form-control" id="tasks" name="exesting_task">
+				<option value="">--Select Task--</option>
+				{% for task_id, task_name in tasks.items%}
+					<option value="{{task_id}}">{{task_name}}</option>
+				{%endfor%}
+			</select>
+		</div>
 		<div class="form-group">
-			  <label for="comment">Comment:</label>
-			    <textarea class="form-control" rows="5" id="comment"></textarea>
-		    </div>
-
-
+			<label for="comment">Add/Update Task:</label>
+			<textarea name="new_task_name" class="form-control" rows="2" id="task" required></textarea>
+		</div>
+		<button class="btn btn-lg btn-primary btn-block" type="submit" id="tasks_submit" data-loading-text="Saving...">Assign</button>	
 	</div>
+	</form>
 </body>
 
 <script>
         $(document).ready(function($){
-	        /*
-        	$('.member_checkbox').click(function(){
-		alert("helloooooooooo");
-		alert($('.member_checkbox:checkbox:checked').val);
-		});
+	});
 
-		$('input:checkbox').click(function () {
-                var sThisVal = (this.checked ? $(this).val() : "");
-                alert(sThisVal);
-                alert("helloooooooooo");
-                });
-                */
+	$('#radio_update_task').click(function(){
+		$('#task').val("");
+		$('#task_list').css("display","block");	
+		$('#tasks').attr("required","required");
+	});
+
+	$('#radio_add_task').click(function(){
+		$('#task').val("");
+		$('#task_list').css("display","none");	
+		$('#tasks').removeAttr("required");
+	});
+
+	$('#tasks').change(function(){
+		tasks_text = $("#tasks option:selected").text();
+		$('#task').val(tasks_text);
+	});
+
+	success_callback = function(json) {
+		if (json.errors != undefined) {
+			alert("Error occured while saving information");
+			$('#alert_box').addClass("alert-danger");
+			$('#alert_box').css("display","block");
+			$('#alert_box').html(json.errors);
+		}
+		else {
+			//Update the task list
+			$('#tasks').find('option').remove();
+			$('#tasks').append('<option value="">--Select Task--</option>');
+			$.each(json.tasks, function(key, value){
+				$('#tasks').append('<option value = "'+key+'">' + value +'</li>');
+			});
+			$('#task').val("");
+
+			//Hide the alert box automatically after some time
+			$('#alert_box').addClass("alert-success");
+			$('#alert_box').css("display","block");
+			$('#alert_box').html(json.msg);
+			$("#alert_box").fadeTo(2000, 500).slideUp(2000, function(){
+			$("#alert_box").slideUp(2000);
+			});
+
+			$('#tasks_submit').button('reset');
+		}
+	} //success_callback
+
+	var options = {
+	        success: success_callback,
+	        error: function() {}
+	};	 
+	
+	$('#tasks_submit').click(function(){
+		$('#form_tasks').ajaxForm(options);
+		$(this).button('loading');
 	});
 
 </script>
