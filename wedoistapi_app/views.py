@@ -26,6 +26,7 @@ def index(request):
 		if login_status == "Success":
 			template = loader.get_template("show_projects.html")
 			available_projects = [{"project_id":1,"project_name":"Project1"},{"project_id":2,"project_name":"Project2"},{"project_id":3,"project_name":"Project3"}]
+			params["temp_var"] = "helloooooo2"
 			available_projects = get_available_projects()
 			params["project_list"] = available_projects
 			context = RequestContext(request, params)
@@ -40,6 +41,30 @@ def index(request):
 	template = loader.get_template('login.html')
         context = RequestContext(request, params)
 	return HttpResponse(template.render(context))
+
+
+def login(request):
+	params = {}
+	if request.method=="POST":
+		login_status = "Success"
+                email_address = request.POST.get('email_address')
+                password = request.POST.get('password')
+                login_status = authenticate_to_api(email_address, password)
+                if login_status == "Success":
+                        template = loader.get_template("show_projects.html")
+                        available_projects = [{"project_id":1,"project_name":"Project1"},{"project_id":2,"project_name":"Project2"},{"project_id":3,"project_name":"Project3"}]
+                        params["temp_var"] = "helloooooo2"
+                        available_projects = get_available_projects()
+                        params["project_list"] = available_projects
+                        context = RequestContext(request, params)
+                        return HttpResponse(template.render(context))
+                else:
+                        template = loader.get_template("login.html")
+                        params["error_message"] = "sfdsdf"
+                        context = RequestContext(request, params)
+                        return HttpResponse(template.render(context))
+
+
 
 def authenticate_to_api(email_address, password):
 	"""
